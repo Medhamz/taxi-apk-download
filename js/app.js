@@ -2,7 +2,7 @@
 // CONFIGURATION DE L'API
 // ============================================================
 
-const API_URL = 'https://visitor-backend.onrender.com/api/stats/visitors';
+const API_URL = 'https://visitor-backend-afgj.onrender.com/api/stats/visitors';
 
 // ============================================================
 // COMPTEUR DE TÉLÉCHARGEMENTS (Local + API)
