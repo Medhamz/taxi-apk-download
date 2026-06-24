@@ -1,5 +1,11 @@
 // ============================================================
-// COMPTEUR DE TÉLÉCHARGEMENTS
+// CONFIGURATION DE L'API
+// ============================================================
+
+const API_URL = 'https://visitor-backend.onrender.com/api/stats/visitors';
+
+// ============================================================
+// COMPTEUR DE TÉLÉCHARGEMENTS (Local + API)
 // ============================================================
 
 let totalDownloads = parseInt(localStorage.getItem('totalDownloads')) || 0;
@@ -25,31 +31,92 @@ function incrementDownload(appType) {
     }
 
     updateDownloadCounters();
+
+    // ✅ Envoyer la statistique au micro-service
+    sendDownloadStats(appType);
 }
 
 // ============================================================
-// COMPTEUR EN LIGNE
+// ENVOI DES STATISTIQUES AU MICRO-SERVICE
 // ============================================================
 
-function updateOnlineCount() {
-    const count = Math.floor(Math.random() * 20) + 5;
-    const onlineElement = document.getElementById('onlineCount');
-    if (onlineElement) {
-        onlineElement.textContent = count;
+async function sendDownloadStats(appType) {
+    try {
+        // On utilise l'endpoint /track pour enregistrer une visite
+        await fetch(`${API_URL}/track`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        console.log(`📊 Statistique envoyée pour ${appType}`);
+    } catch (error) {
+        console.error('❌ Erreur lors de l\'envoi des stats:', error);
     }
 }
+
+// ============================================================
+// RÉCUPÉRATION DES STATISTIQUES EN TEMPS RÉEL
+// ============================================================
+
+async function fetchRealTimeStats() {
+    try {
+        const response = await fetch(`${API_URL}/online`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        // Mettre à jour les compteurs avec les données de l'API
+        const onlineElement = document.getElementById('onlineCount');
+        const totalElement = document.getElementById('totalDownloads');
+        const clientElement = document.getElementById('clientDownloads');
+        const driverElement = document.getElementById('driverDownloads');
+
+        if (onlineElement) {
+            onlineElement.textContent = data.online || 0;
+        }
+        if (totalElement) {
+            totalElement.textContent = data.totalDownloads || 0;
+        }
+        if (clientElement) {
+            clientElement.textContent = data.clientDownloads || 0;
+        }
+        if (driverElement) {
+            driverElement.textContent = data.driverDownloads || 0;
+        }
+
+        // Mettre à jour les variables locales
+        totalDownloads = data.totalDownloads || 0;
+        clientDownloads = data.clientDownloads || 0;
+        driverDownloads = data.driverDownloads || 0;
+
+        console.log('✅ Statistiques mises à jour:', data);
+    } catch (error) {
+        console.error('❌ Erreur lors de la récupération des stats:', error);
+        // En cas d'erreur, on garde les valeurs locales
+    }
+}
+
+// ============================================================
+// COMPTEUR EN LIGNE (Maintenant alimenté par l'API)
+// ============================================================
+
+// La fonction updateOnlineCount est remplacée par fetchRealTimeStats
 
 // ============================================================
 // GESTIONNAIRE DE TÉLÉCHARGEMENT
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialiser les compteurs
-    updateDownloadCounters();
-    updateOnlineCount();
+    // Initialiser les compteurs avec l'API
+    fetchRealTimeStats();
 
-    // Mettre à jour le compteur en ligne toutes les 30 secondes
-    setInterval(updateOnlineCount, 30000);
+    // Mettre à jour les statistiques toutes les 30 secondes
+    setInterval(fetchRealTimeStats, 30000);
+
+    // Envoyer une visite lors du chargement de la page
+    sendDownloadStats('page_view');
 
     const downloadButtons = document.querySelectorAll('.download-btn');
     const notification = document.getElementById('downloadNotification');
@@ -62,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const appName = this.closest('.app-card').querySelector('h3').textContent;
             const href = this.getAttribute('href');
 
-            // Incrémenter le compteur
+            // Incrémenter le compteur local
             incrementDownload(appType);
 
             // Afficher la notification
@@ -119,5 +186,5 @@ function toggleFaq(element) {
 // ============================================================
 
 console.log('🚖 Bienvenue sur Abdil Taxi !');
-console.log(`📊 ${totalDownloads} téléchargements totaux enregistrés.`);
+console.log('📊 Les statistiques sont synchronisées en temps réel.');
 console.log('📱 Téléchargez l\'application et profitez de nos services.');
