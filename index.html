@@ -7,11 +7,13 @@
 
     <!-- ✅ FAVICON (Icône de l'onglet) -->
     <link rel="icon" type="image/png" href="images/favicon.png">
-    <!-- ✅ FAVICON pour les appareils Apple (iPhone, iPad) -->
     <link rel="apple-touch-icon" href="images/favicon.png">
 
     <!-- Font Awesome pour les icônes -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Animate.css pour les animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -36,9 +38,26 @@
 <section class="hero">
     <div class="container">
         <div class="hero-content">
-            <h1>🚖 Téléchargez nos applications</h1>
-            <p class="subtitle">Choisissez votre application et installez-la sur votre téléphone</p>
-            <div class="hero-instructions">
+            <h1 class="animate__animated animate__fadeInUp">🚖 Téléchargez nos applications</h1>
+            <p class="subtitle animate__animated animate__fadeInUp animate__delay-1s">Choisissez votre application et installez-la sur votre téléphone</p>
+
+            <!-- ✅ COMPTEUR DE TÉLÉCHARGEMENTS -->
+            <div class="download-stats animate__animated animate__fadeInUp animate__delay-2s">
+                <div class="stat-item">
+                    <span class="stat-number" id="totalDownloads">0</span>
+                    <span class="stat-label">Téléchargements totaux</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="clientDownloads">0</span>
+                    <span class="stat-label">Téléchargements client</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="driverDownloads">0</span>
+                    <span class="stat-label">Téléchargements chauffeur</span>
+                </div>
+            </div>
+
+            <div class="hero-instructions animate__animated animate__fadeInUp animate__delay-3s">
                 <div class="instruction-step">
                     <span class="step-number">1</span>
                     <span class="step-text">Téléchargez l'APK</span>
@@ -52,6 +71,16 @@
                     <span class="step-text">Installez l'application</span>
                 </div>
             </div>
+        </div>
+    </div>
+</section>
+
+<!-- ✅ SECTION NEWS / ACTUALITÉS -->
+<section class="news-section">
+    <div class="container">
+        <div class="news-banner">
+            <span class="news-tag">🔔 NOUVEAUTÉ</span>
+            <p class="news-text">Version 2.0 disponible ! Découvrez le nouveau paiement par QR Code et le porte-monnaie électronique.</p>
         </div>
     </div>
 </section>
@@ -85,7 +114,7 @@
                     </div>
                 </div>
                 <div class="app-card-footer">
-                    <a href="apks/taxi-client.apk" class="download-btn client-btn" download>
+                    <a href="apks/taxi-client.apk" class="download-btn client-btn" download data-app="client">
                         <i class="fas fa-download"></i> Télécharger l'APK
                     </a>
                     <span class="last-updated">Dernière mise à jour : 24/06/2026</span>
@@ -115,7 +144,7 @@
                     </div>
                 </div>
                 <div class="app-card-footer">
-                    <a href="apks/taxi-driver.apk" class="download-btn driver-btn" download>
+                    <a href="apks/taxi-driver.apk" class="download-btn driver-btn" download data-app="driver">
                         <i class="fas fa-download"></i> Télécharger l'APK
                     </a>
                     <span class="last-updated">Dernière mise à jour : 24/06/2026</span>
@@ -151,6 +180,66 @@
                 <div class="instruction-icon">4</div>
                 <h4>Lancer l'application</h4>
                 <p>Une fois l'installation terminée, ouvrez l'application depuis votre menu et connectez-vous.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ✅ SECTION AVIS CLIENTS -->
+<section class="reviews-section">
+    <div class="container">
+        <h2 class="section-title">⭐ Ce que disent nos utilisateurs</h2>
+        <div class="reviews-grid">
+            <div class="review-card">
+                <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                <p class="review-text">"Application très pratique ! Je réserve mes courses en quelques secondes."</p>
+                <div class="review-author">- Amina D.</div>
+            </div>
+            <div class="review-card">
+                <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                <p class="review-text">"Le suivi en temps réel est impeccable. Je me sens en sécurité."</p>
+                <div class="review-author">- Ibrahim M.</div>
+            </div>
+            <div class="review-card">
+                <div class="review-stars">⭐⭐⭐⭐</div>
+                <p class="review-text">"Le porte-monnaie électronique change la vie ! Plus besoin d'espèces."</p>
+                <div class="review-author">- Fatou S.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ✅ SECTION FAQ -->
+<section class="faq-section">
+    <div class="container">
+        <h2 class="section-title">❓ Questions fréquentes</h2>
+        <div class="faq-grid">
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>📱 Comment installer l'APK sur mon téléphone ?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Téléchargez l'APK, puis ouvrez le fichier. Si vous voyez un message "Sources inconnues", allez dans Paramètres → Sécurité et activez l'option. Puis réessayez l'installation.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>💳 Comment payer avec le porte-monnaie ?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Rechargez votre porte-monnaie via Orange Money ou Airtel Money. Vous pouvez ensuite payer vos courses directement depuis l'application.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>🚖 Comment devenir chauffeur ?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Téléchargez l'application chauffeur, créez un compte et soumettez vos documents. Notre équipe validera votre dossier dans les 48h.</p>
+                </div>
             </div>
         </div>
     </div>
