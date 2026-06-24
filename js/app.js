@@ -23,17 +23,18 @@ function updateDownloadCounters() {
 // ============================================================
 
 async function sendDownloadStats(appType) {
+    console.log(`📤 Envoi de la statistique pour: '${appType}'`);
     try {
         const response = await fetch(`${API_URL}/track`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ appType: appType }) // ✅ Envoi du type
         });
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
         console.log(`📊 Statistique envoyée pour ${appType}:`, data);
-        // Mettre à jour les compteurs avec les données renvoyées
         updateCountersFromAPI(data);
     } catch (error) {
         console.error('❌ Erreur lors de l\'envoi des stats:', error);
@@ -63,17 +64,14 @@ async function fetchRealTimeStats() {
 // ============================================================
 
 function updateCountersFromAPI(data) {
-    // Mettre à jour les variables
     totalDownloads = data.totalDownloads || 0;
     clientDownloads = data.clientDownloads || 0;
     driverDownloads = data.driverDownloads || 0;
 
-    // Mettre à jour l'affichage
     document.getElementById('totalDownloads').textContent = totalDownloads;
     document.getElementById('clientDownloads').textContent = clientDownloads;
     document.getElementById('driverDownloads').textContent = driverDownloads;
 
-    // Mettre à jour le compteur "En ligne"
     const onlineElement = document.getElementById('onlineCount');
     if (onlineElement) {
         onlineElement.textContent = data.online || 0;
@@ -85,13 +83,8 @@ function updateCountersFromAPI(data) {
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Charger les stats au démarrage
     fetchRealTimeStats();
-
-    // Mettre à jour toutes les 15 secondes
     setInterval(fetchRealTimeStats, 15000);
-
-    // Envoyer une visite au chargement
     sendDownloadStats('page_view');
 
     const downloadButtons = document.querySelectorAll('.download-btn');
@@ -105,7 +98,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const appName = this.closest('.app-card').querySelector('h3').textContent;
             const href = this.getAttribute('href');
 
-            // ✅ Incrémenter le compteur OPTIMISTE (pour un retour immédiat)
+            console.log(`🖱️ Clic sur le bouton: ${appName} (appType: ${appType})`);
+
+            // ✅ Incrémenter immédiatement pour l'expérience utilisateur
             if (appType === 'client') {
                 clientDownloads++;
             } else if (appType === 'driver') {
@@ -114,17 +109,15 @@ document.addEventListener('DOMContentLoaded', function() {
             totalDownloads++;
             updateDownloadCounters();
 
-            // ✅ Envoyer la statistique au serveur
+            // ✅ Envoyer la statistique avec le bon appType
             sendDownloadStats(appType);
 
-            // Afficher la notification
             if (notification) {
                 notification.querySelector('span').textContent = `⬇️ Téléchargement de ${appName}...`;
                 notification.classList.add('show');
                 setTimeout(() => notification.classList.remove('show'), 2500);
             }
 
-            // Démarrer le téléchargement
             const link = document.createElement('a');
             link.href = href;
             link.download = href.split('/').pop();
